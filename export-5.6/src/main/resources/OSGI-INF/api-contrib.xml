@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.export.sample.api" version="1.0.0">
+
+ <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations">
+    <documentation>Contribute operation</documentation>
+    <operation
+      class="org.nuxeo.export.DoExportOperation" />
+  </extension>
+
+</component>
