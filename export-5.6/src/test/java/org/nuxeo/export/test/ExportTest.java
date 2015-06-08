@@ -71,6 +71,10 @@ public class ExportTest {
         fileDoc2.setPropertyValue("dc:description", "Youhou");
         fileDoc2 = session.saveDocument(fileDoc2);
 
+        fileDoc2.putContextData(VersioningService.VERSIONING_OPTION, VersioningOption.MINOR);
+        fileDoc2.setPropertyValue("dc:description", "Youhou2");
+        fileDoc2 = session.saveDocument(fileDoc2);
+
         session.save();
 
         return workspace;
@@ -98,7 +102,7 @@ public class ExportTest {
 
         DocumentModelList versions = session.query("select * from Document where ecm:isCheckedInVersion = 1");
 
-        Assert.assertEquals(1, versions.size());
+        Assert.assertEquals(2, versions.size());
 
         File out = getExportDirectory();
 

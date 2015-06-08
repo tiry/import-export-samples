@@ -2,8 +2,10 @@ package org.nuxeo.export;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.dom4j.Document;
+import org.dom4j.Element;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.io.DocumentPipe;
 import org.nuxeo.ecm.core.io.DocumentReader;
@@ -54,6 +56,15 @@ public class SampleExporter {
             public boolean transform(ExportedDocument xDoc) throws IOException {
 
                 Document xmlDoc = xDoc.getDocument();
+
+                // remove the Imutable facet since this is a pseudo facet that is actually generated at runtine
+                List<Object> facets =xmlDoc.getRootElement().element("system").elements("facet");
+                for (Object facet : facets) {
+                    Element f = (Element) facet;
+                    if ("Immutable".equalsIgnoreCase(f.getTextTrim())) {
+                        f.detach();
+                    }
+                }
 
                 // do change the xml document as needed
 

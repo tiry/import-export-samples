@@ -1,6 +1,7 @@
 package org.nuxeo.importer.test;
 
 import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -11,6 +12,8 @@ import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.test.CoreFeature;
 import org.nuxeo.importer.SampleImporter;
 import org.nuxeo.runtime.test.runner.Features;
@@ -62,6 +65,15 @@ public class ImportTest {
         // TODO
         // Check that UUIDs are stables
 
+        // Check versions
+
+        DocumentRef ref = new PathRef("/ws1/folder/file");
+        DocumentModel doc = session.getDocument(ref);
+        Assert.assertNotNull(doc);
+
+        List<DocumentModel> versions = session.getVersions(ref);
+        Assert.assertEquals(2, versions.size());
+
         System.out.println(sb.toString());
 
     }
@@ -76,7 +88,12 @@ public class ImportTest {
             sb.append(doc.getType());
             sb.append(" - ");
             sb.append(doc.getTitle());
+            sb.append(" - ");
+            sb.append(doc.isVersion());
+            sb.append(" - ");
+            sb.append(doc.getVersionLabel());
             sb.append("\n");
+
 
         }
     }
