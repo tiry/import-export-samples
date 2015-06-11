@@ -1,11 +1,12 @@
-package org.nuxeo.io.ext.plugins;
+package org.nuxeo.io.transformer;
+
+import java.io.IOException;
 
 import org.dom4j.Element;
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.io.impl.ExportedDocumentImpl;
-import org.nuxeo.io.ext.ExportExtension;
+import org.nuxeo.ecm.core.io.DocumentTransformer;
+import org.nuxeo.ecm.core.io.ExportedDocument;
 
-public class DoctypeToFacetTranslator implements ExportExtension {
+public class DoctypeToFacetTranslator implements DocumentTransformer {
 
     protected final String docType;
 
@@ -20,13 +21,14 @@ public class DoctypeToFacetTranslator implements ExportExtension {
     }
 
     @Override
-    public void updateExport(DocumentModel docModel, ExportedDocumentImpl result) throws Exception {
-        if (docModel.getType().equals(docType)) {
-            Element root = result.getDocument().getRootElement();
+    public boolean transform(ExportedDocument xdoc) throws IOException {
+        if (xdoc.getType().equals(docType)) {
+            Element root = xdoc.getDocument().getRootElement();
             Element sys = root.element("system");
             sys.element("type").setText(newDocType);
             sys.addElement("facet").setText(facet);
         }
+        return true;
     }
 
 }

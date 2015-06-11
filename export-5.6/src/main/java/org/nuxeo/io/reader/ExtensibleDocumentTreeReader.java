@@ -1,4 +1,4 @@
-package org.nuxeo.io.ext;
+package org.nuxeo.io.reader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import org.nuxeo.ecm.core.io.ExportedDocument;
 import org.nuxeo.ecm.core.io.impl.ExportedDocumentImpl;
 import org.nuxeo.ecm.core.io.impl.plugins.DocumentModelReader;
 
-public class DocumentTreeReaderExtended extends DocumentModelReader {
+public class ExtensibleDocumentTreeReader extends DocumentModelReader {
 
     protected DocumentTreeIterator iterator;
 
@@ -25,18 +25,18 @@ public class DocumentTreeReaderExtended extends DocumentModelReader {
 
     protected List<ExportExtension> extensions = new ArrayList<ExportExtension>();
 
-    public DocumentTreeReaderExtended(CoreSession session, DocumentModel root, boolean excludeRoot)
+    public ExtensibleDocumentTreeReader(CoreSession session, DocumentModel root, boolean excludeRoot)
             throws ClientException {
         super(session);
         iterator = new DocumentTreeIterator(session, root, excludeRoot);
         pathSegmentsToRemove = root.getPath().segmentCount() - (excludeRoot ? 0 : 1);
     }
 
-    public DocumentTreeReaderExtended(CoreSession session, DocumentRef root) throws ClientException {
+    public ExtensibleDocumentTreeReader(CoreSession session, DocumentRef root) throws ClientException {
         this(session, session.getDocument(root));
     }
 
-    public DocumentTreeReaderExtended(CoreSession session, DocumentModel root) throws ClientException {
+    public ExtensibleDocumentTreeReader(CoreSession session, DocumentModel root) throws ClientException {
         this(session, root, false);
     }
 

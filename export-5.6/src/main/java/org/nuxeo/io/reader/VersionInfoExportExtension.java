@@ -1,4 +1,4 @@
-package org.nuxeo.io.ext.plugins;
+package org.nuxeo.io.reader;
 
 import static org.nuxeo.ecm.core.api.CoreSession.IMPORT_VERSION_CREATED;
 import static org.nuxeo.ecm.core.api.CoreSession.IMPORT_VERSION_DESCRIPTION;
@@ -12,9 +12,8 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.io.impl.ExportedDocumentImpl;
 import org.nuxeo.ecm.core.schema.types.primitives.DateType;
-import org.nuxeo.io.ext.ExportExtension;
 
-public class VersionInfoExtension implements ExportExtension {
+public class VersionInfoExportExtension implements ExportExtension {
 
     @Override
     public void updateExport(DocumentModel docModel, ExportedDocumentImpl result) throws Exception {
