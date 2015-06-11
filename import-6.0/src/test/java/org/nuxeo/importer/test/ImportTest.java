@@ -16,11 +16,15 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.test.CoreFeature;
 import org.nuxeo.importer.SampleImporter;
+import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
+import org.nuxeo.runtime.test.runner.LocalDeploy;
 
 @RunWith(FeaturesRunner.class)
 @Features({CoreFeature.class})
+@Deploy("org.nuxeo.import.sample")
+@LocalDeploy({"org.nuxeo.import.sample:docTypes.xml"})
 public class ImportTest {
 
     @Inject
@@ -75,6 +79,13 @@ public class ImportTest {
         Assert.assertEquals(2, versions.size());
 
         System.out.println(sb.toString());
+
+        // check transtyping for Invoice !
+        DocumentModel invoice = session.getDocument(new PathRef("/ws1/invoice"));
+        Assert.assertEquals("File", invoice.getType());
+        Assert.assertTrue(invoice.hasFacet("Invoice"));
+        Assert.assertEquals("$10,000", invoice.getPropertyValue("iv:InvoiceAmount"));
+
 
     }
 
