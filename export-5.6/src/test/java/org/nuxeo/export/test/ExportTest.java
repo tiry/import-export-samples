@@ -21,12 +21,16 @@ import org.nuxeo.ecm.core.test.annotations.BackendType;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.export.SampleExporter;
+import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
+import org.nuxeo.runtime.test.runner.LocalDeploy;
 
 @RunWith(FeaturesRunner.class)
 @Features({TransactionalFeature.class ,CoreFeature.class})
 @RepositoryConfig(repositoryName = "default", type = BackendType.H2)
+@Deploy("org.nuxeo.export.sample")
+@LocalDeploy({"org.nuxeo.export.sample:docTypes.xml"})
 public class ExportTest {
 
     @Inject
@@ -40,17 +44,20 @@ public class ExportTest {
         workspace.setProperty("dublincore", "title", "test WS");
         workspace = session.createDocument(workspace);
 
-        DocumentModel fileDoc = session.createDocumentModel(workspace.getPathAsString(), "file", "File");
-        fileDoc.setProperty("dublincore", "title", "MyDoc");
+        DocumentModel invoiceDoc = session.createDocumentModel(workspace.getPathAsString(), "invoice", "Invoice");
+        invoiceDoc.setProperty("dublincore", "title", "MyDoc");
+        invoiceDoc.setProperty("invoice", "InvoiceNumber", "0001");
+        invoiceDoc.setPropertyValue("inv:InvoiceAmount", "$10,000");
+
 
         Blob blob = new StringBlob("SomeDummyContent");
         blob.setFilename("dummyBlob.txt");
-        fileDoc.setProperty("file", "content", blob);
+        invoiceDoc.setProperty("file", "content", blob);
 
-        fileDoc = session.createDocument(fileDoc);
+        invoiceDoc = session.createDocument(invoiceDoc);
 
-        fileDoc.addFacet("HiddenInNavigation");
-        fileDoc = session.saveDocument(fileDoc);
+        invoiceDoc.addFacet("HiddenInNavigation");
+        invoiceDoc = session.saveDocument(invoiceDoc);
 
 
         DocumentModel folderDoc = session.createDocumentModel(workspace.getPathAsString(), "folder", "Folder");
@@ -121,6 +128,12 @@ public class ExportTest {
 
         // check version exported
         Assert.assertTrue(listing.contains("ws1/folder/file/__versions__/1.0/document.xml"));
+
+        // check invoice exported
+        Assert.assertTrue(listing.contains("ws1/invoice/document.xml"));
+        String xml = FileUtils.readFileToString(new File(out,"ws1/invoice/document.xml"));
+        Assert.assertTrue(xml.contains("<type>File</type>"));
+        Assert.assertTrue(xml.contains("<facet>Invoice</facet>"));
 
         System.out.println(sb.toString());
 

@@ -15,6 +15,8 @@ import org.nuxeo.ecm.core.io.ExportedDocument;
 import org.nuxeo.ecm.core.io.impl.DocumentPipeImpl;
 import org.nuxeo.ecm.core.io.impl.plugins.XMLDirectoryWriter;
 import org.nuxeo.io.ext.DocumentTreeReaderExtended;
+import org.nuxeo.io.ext.plugins.DoctypeToFacetTranslator;
+import org.nuxeo.io.ext.plugins.VersionInfoExtension;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
 public class SampleExporter {
@@ -30,8 +32,12 @@ public class SampleExporter {
 
     public void run() throws Exception {
 
-        final DocumentReader reader = new DocumentTreeReaderExtended(root.getCoreSession(), root);
+        final DocumentTreeReaderExtended reader = new DocumentTreeReaderExtended(root.getCoreSession(), root);
         DocumentWriter writer = new XMLDirectoryWriter(destination);
+
+        // register extensions !
+        reader.registerExtension(new VersionInfoExtension());
+        reader.registerExtension(new DoctypeToFacetTranslator("Invoice", "File", "Invoice"));
 
         DocumentPipe pipe = new DocumentPipeImpl(10) {
 
