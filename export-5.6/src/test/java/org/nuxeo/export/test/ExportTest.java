@@ -27,10 +27,10 @@ import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
 
 @RunWith(FeaturesRunner.class)
-@Features({TransactionalFeature.class ,CoreFeature.class})
+@Features({ TransactionalFeature.class, CoreFeature.class })
 @RepositoryConfig(repositoryName = "default", type = BackendType.H2)
 @Deploy("org.nuxeo.export.sample")
-@LocalDeploy({"org.nuxeo.export.sample:docTypes.xml"})
+@LocalDeploy({ "org.nuxeo.export.sample:docTypes.xml" })
 public class ExportTest {
 
     @Inject
@@ -49,6 +49,8 @@ public class ExportTest {
         invoiceDoc.setProperty("invoice", "InvoiceNumber", "0001");
         invoiceDoc.setPropertyValue("inv:InvoiceAmount", "$10,000");
 
+        invoiceDoc.setPropertyValue("dep:fieldA", new String[] { "A", "B", "C" });
+        invoiceDoc.setPropertyValue("dep:fieldB", "XYZ");
 
         Blob blob = new StringBlob("SomeDummyContent");
         blob.setFilename("dummyBlob.txt");
@@ -59,11 +61,9 @@ public class ExportTest {
         invoiceDoc.addFacet("HiddenInNavigation");
         invoiceDoc = session.saveDocument(invoiceDoc);
 
-
         DocumentModel folderDoc = session.createDocumentModel(workspace.getPathAsString(), "folder", "Folder");
         folderDoc.setProperty("dublincore", "title", "MyFolder");
         folderDoc = session.createDocument(folderDoc);
-
 
         DocumentModel fileDoc2 = session.createDocumentModel(folderDoc.getPathAsString(), "file", "File");
         fileDoc2.setProperty("dublincore", "title", "MyDoc");
@@ -119,7 +119,7 @@ public class ExportTest {
 
         StringBuffer sb = new StringBuffer();
 
-        dump(sb,out);
+        dump(sb, out);
 
         String listing = sb.toString();
 
@@ -131,14 +131,20 @@ public class ExportTest {
 
         // check invoice exported
         Assert.assertTrue(listing.contains("ws1/invoice/document.xml"));
-        String xml = FileUtils.readFileToString(new File(out,"ws1/invoice/document.xml"));
+        String xml = FileUtils.readFileToString(new File(out, "ws1/invoice/document.xml"));
         Assert.assertTrue(xml.contains("<type>File</type>"));
         Assert.assertTrue(xml.contains("<facet>Invoice</facet>"));
+
+        // check field translation
+        Assert.assertTrue(xml.contains("<inv:A>"));
+        Assert.assertTrue(xml.contains("<inv:B>XYZ"));
+
+        // check schema deleted
+        Assert.assertFalse(xml.contains("deprecated"));
 
         System.out.println(sb.toString());
 
     }
-
 
     protected void dump(StringBuffer sb, File root) {
         for (File f : root.listFiles()) {

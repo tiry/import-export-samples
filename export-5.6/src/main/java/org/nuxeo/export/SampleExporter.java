@@ -12,7 +12,9 @@ import org.nuxeo.io.reader.ExtensibleDocumentTreeReader;
 import org.nuxeo.io.reader.VersionInfoExportExtension;
 import org.nuxeo.io.transformer.DoctypeToFacetTranslator;
 import org.nuxeo.io.transformer.FacetRemover;
+import org.nuxeo.io.transformer.FieldMapper;
 import org.nuxeo.io.transformer.PluggableDocumentTransformer;
+import org.nuxeo.io.transformer.SchemaRemover;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
 public class SampleExporter {
@@ -56,6 +58,9 @@ public class SampleExporter {
         trf.registerExtension(new DoctypeToFacetTranslator("Invoice", "File", "Invoice"));
         trf.registerExtension(new FacetRemover(null, "IOnlyExistsInV1"));
         trf.registerExtension(new FacetRemover(null, "Immutable"));
+        trf.registerExtension(new FieldMapper("deprecated", "dep:fieldA", "invoice", "inv:A"));
+        trf.registerExtension(new FieldMapper("deprecated", "dep:fieldB", "invoice", "inv:B"));
+        trf.registerExtension(new SchemaRemover(null, "deprecated"));
 
         pipe.addTransformer(trf);
         pipe.run();

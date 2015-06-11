@@ -86,6 +86,11 @@ public class ImportTest {
         Assert.assertTrue(invoice.hasFacet("Invoice"));
         Assert.assertEquals("$10,000", invoice.getPropertyValue("iv:InvoiceAmount"));
 
+        // check field translation
+        Assert.assertEquals("XYZ", invoice.getPropertyValue("iv:B"));
+        String[] lst = (String[]) invoice.getPropertyValue("iv:A");
+        Assert.assertEquals("A", lst[0]);
+        Assert.assertEquals("B", lst[1]);
 
     }
 
