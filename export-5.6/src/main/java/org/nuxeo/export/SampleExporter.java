@@ -13,7 +13,6 @@ import org.nuxeo.io.reader.VersionInfoExportExtension;
 import org.nuxeo.io.transformer.DoctypeToFacetTranslator;
 import org.nuxeo.io.transformer.FacetRemover;
 import org.nuxeo.io.transformer.FieldMapper;
-import org.nuxeo.io.transformer.PluggableDocumentTransformer;
 import org.nuxeo.io.transformer.SchemaRemover;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
@@ -54,18 +53,15 @@ public class SampleExporter {
         pipe.setReader(reader);
         pipe.setWriter(writer);
 
-        PluggableDocumentTransformer trf = new PluggableDocumentTransformer();
-        trf.registerExtension(new DoctypeToFacetTranslator("Invoice", "File", "Invoice"));
-        trf.registerExtension(new FacetRemover(null, "IOnlyExistsInV1"));
-        trf.registerExtension(new FacetRemover(null, "Immutable"));
-        trf.registerExtension(new FieldMapper("deprecated", "dep:fieldA", "invoice", "inv:A"));
-        trf.registerExtension(new FieldMapper("deprecated", "dep:fieldB", "invoice", "inv:B"));
-        trf.registerExtension(new FieldMapper("deprecated", "dep:fieldC", "new", "nw:Y"));
-        trf.registerExtension(new SchemaRemover(null, "deprecated"));
+        pipe.addTransformer(new DoctypeToFacetTranslator("Invoice", "File", "Invoice"));
+        pipe.addTransformer(new FacetRemover(null, "IOnlyExistsInV1"));
+        pipe.addTransformer(new FacetRemover(null, "Immutable"));
+        pipe.addTransformer(new FieldMapper("deprecated", "dep:fieldA", "invoice", "inv:A"));
+        pipe.addTransformer(new FieldMapper("deprecated", "dep:fieldB", "invoice", "inv:B"));
+        pipe.addTransformer(new FieldMapper("deprecated", "dep:fieldC", "new", "nw:Y"));
+        pipe.addTransformer(new SchemaRemover(null, "deprecated"));
 
-        pipe.addTransformer(trf);
         pipe.run();
-
     }
 
 }

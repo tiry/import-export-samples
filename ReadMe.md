@@ -1,8 +1,8 @@
 
 
-## About the repository
+## About this repository
 
-Here are some sample code for managing Data Migration between 2 Nuxeo servers in different vesions using `Nuxeo-core-io`.
+Here are some sample code for managing Data Migration between 2 Nuxeo servers in different vesions using `nuxeo-core-io`.
 
 ## Why Core-IO ?
 
@@ -26,15 +26,19 @@ Basically, `nuxeo-core-io` allows to define pipes for Read/Transform/Write Nuxeo
  - an export on the source tree
      - read data from source repository
      - strip the data that is not needed
+     - transform data as needed
      - write the data to disk
  - an import tree
      - read data from disk
-     - transform data as needed
+     - transform data if needed
      - create Nuxeo Documents inside the target repository
+
+Basically, for the provided sample code, most of the transfornation work is done at export time, however, this logic could actually be moved to the importer part.
 
 ## Modules
 
 `export-5.6` : is a sample code for exporting documents from a Nuxeo 5.6 instance
 
 `import-6.0` : is a sample code for importing documents into a Nuxeo 6.0 instance
+
 
