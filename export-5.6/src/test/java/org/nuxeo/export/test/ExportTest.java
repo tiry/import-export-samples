@@ -1,6 +1,7 @@
 package org.nuxeo.export.test;
 
 import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -15,19 +16,24 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.VersioningOption;
 import org.nuxeo.ecm.core.api.impl.blob.StringBlob;
+import org.nuxeo.ecm.core.event.EventService;
 import org.nuxeo.ecm.core.test.CoreFeature;
 import org.nuxeo.ecm.core.test.TransactionalFeature;
 import org.nuxeo.ecm.core.test.annotations.BackendType;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.core.versioning.VersioningService;
+import org.nuxeo.ecm.platform.audit.AuditFeature;
+import org.nuxeo.ecm.platform.audit.api.AuditReader;
+import org.nuxeo.ecm.platform.audit.api.LogEntry;
 import org.nuxeo.export.SampleExporter;
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
 
 @RunWith(FeaturesRunner.class)
-@Features({ TransactionalFeature.class, CoreFeature.class })
+@Features({ TransactionalFeature.class, CoreFeature.class, AuditFeature.class })
 @RepositoryConfig(repositoryName = "default", type = BackendType.H2)
 @Deploy("org.nuxeo.export.sample")
 @LocalDeploy({ "org.nuxeo.export.sample:docTypes.xml" })
@@ -35,6 +41,11 @@ public class ExportTest {
 
     @Inject
     protected CoreSession session;
+
+    @Inject
+    protected AuditReader auditReader;
+
+    String uuid;
 
     protected DocumentModel createSomethingToExport() throws Exception {
 
@@ -84,7 +95,15 @@ public class ExportTest {
         fileDoc2.setPropertyValue("dc:description", "Youhou2");
         fileDoc2 = session.saveDocument(fileDoc2);
 
+        uuid = fileDoc2.getId();
+
         session.save();
+
+        // Audit being async we must wait !
+        Thread.sleep(200);
+
+        EventService es = Framework.getLocalService(EventService.class);
+        es.waitForAsyncCompletion();
 
         return workspace;
     }
@@ -148,8 +167,12 @@ public class ExportTest {
         Assert.assertTrue(xml.contains("<schema name=\"new\""));
         Assert.assertTrue(xml.contains("<Y>foo</Y>"));
 
-
         System.out.println(sb.toString());
+
+        List<LogEntry> entries = auditReader.getLogEntriesFor(uuid);
+        for (LogEntry e : entries) {
+            System.out.println(e.toString());
+        }
 
     }
 
