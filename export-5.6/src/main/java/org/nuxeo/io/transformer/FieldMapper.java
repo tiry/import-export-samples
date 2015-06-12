@@ -17,9 +17,9 @@ public class FieldMapper implements DocumentTransformer {
 
     protected final String dstField;
 
-    public FieldMapper(String srcSchemaName, String srcField, String dstSchemaName,  String dstField) {
+    public FieldMapper(String srcSchemaName, String srcField, String dstSchemaName, String dstField) {
         this.srcSchemaName = srcSchemaName;
-        if (dstSchemaName == null && dstField!=null ) {
+        if (dstSchemaName == null && dstField != null) {
             this.dstSchemaName = srcSchemaName;
         } else {
             this.dstSchemaName = dstSchemaName;
@@ -32,11 +32,21 @@ public class FieldMapper implements DocumentTransformer {
     protected String getUnprefixedName(String name) {
 
         int idx = name.indexOf(":");
-        if (idx >0) {
-            return name.substring(idx+1);
+        if (idx > 0) {
+            return name.substring(idx + 1);
         }
         return name;
     }
+
+    protected String getPrefix(String name) {
+
+        int idx = name.indexOf(":");
+        if (idx > 0) {
+            return name.substring(0,idx);
+        }
+        return null;
+    }
+
 
     @Override
     public boolean transform(ExportedDocument xdoc) throws IOException {
@@ -56,31 +66,43 @@ public class FieldMapper implements DocumentTransformer {
                 }
             }
 
-            if (dstField==null) {
+            Element dstSchema = null;
+            if (dstField == null || src == null) {
                 // NOP
             } else {
                 for (Object s : schemas) {
                     Element schema = (Element) s;
                     String name = schema.attribute("name").getText();
-
                     if (dstSchemaName.equalsIgnoreCase(name)) {
-                        Element dst = schema.element(getUnprefixedName(dstField));
-
-                        if (dst == null) {
-                            dst = schema.addElement(dstField);
-                        }
-                        for (Object sub : src.elements()) {
-                            Element e = (Element)sub;
-                            e.detach();
-                            dst.add(e);
-                        }
-                        String txt = src.getText();
-                        if (txt!=null) {
-                            dst.addText(txt);
-                        }
+                        dstSchema = schema;
+                        break;
                     }
                 }
+                if (dstSchema == null) {
+                    dstSchema = root.addElement("schema");
+                    dstSchema.addAttribute("name", dstSchemaName);
+                }
+                Element dst = dstSchema.element(getUnprefixedName(dstField));
+                if (dst == null) {
+                    String prefix = getPrefix(dstField);
+                    if (prefix==null ||  dstSchema.getNamespaceForPrefix(prefix)==null) {
+                        dst = dstSchema.addElement(getUnprefixedName(dstField));
+                    } else {
+                        dst = dstSchema.addElement(dstField);
+                    }
+                }
+                for (Object sub : src.elements()) {
+                    Element e = (Element) sub;
+                    e.detach();
+                    dst.add(e);
+                }
+                String txt = src.getText();
+                if (txt != null) {
+                    dst.addText(txt);
+                }
+
             }
+
         }
         return true;
     }

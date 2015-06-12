@@ -92,6 +92,9 @@ public class ImportTest {
         Assert.assertEquals("A", lst[0]);
         Assert.assertEquals("B", lst[1]);
 
+        // check new schema
+        Assert.assertEquals("foo", invoice.getPropertyValue("nw:Y"));
+
     }
 
 

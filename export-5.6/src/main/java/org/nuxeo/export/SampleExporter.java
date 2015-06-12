@@ -60,6 +60,7 @@ public class SampleExporter {
         trf.registerExtension(new FacetRemover(null, "Immutable"));
         trf.registerExtension(new FieldMapper("deprecated", "dep:fieldA", "invoice", "inv:A"));
         trf.registerExtension(new FieldMapper("deprecated", "dep:fieldB", "invoice", "inv:B"));
+        trf.registerExtension(new FieldMapper("deprecated", "dep:fieldC", "new", "nw:Y"));
         trf.registerExtension(new SchemaRemover(null, "deprecated"));
 
         pipe.addTransformer(trf);

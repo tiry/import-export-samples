@@ -51,6 +51,8 @@ public class ExportTest {
 
         invoiceDoc.setPropertyValue("dep:fieldA", new String[] { "A", "B", "C" });
         invoiceDoc.setPropertyValue("dep:fieldB", "XYZ");
+        invoiceDoc.setPropertyValue("dep:fieldC", "foo");
+        invoiceDoc.setPropertyValue("dep:fieldD", "bar");
 
         Blob blob = new StringBlob("SomeDummyContent");
         blob.setFilename("dummyBlob.txt");
@@ -141,6 +143,11 @@ public class ExportTest {
 
         // check schema deleted
         Assert.assertFalse(xml.contains("deprecated"));
+
+        // check new Schena
+        Assert.assertTrue(xml.contains("<schema name=\"new\""));
+        Assert.assertTrue(xml.contains("<Y>foo</Y>"));
+
 
         System.out.println(sb.toString());
 

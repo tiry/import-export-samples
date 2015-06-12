@@ -4,11 +4,13 @@
 
 	<extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
 		<schema name="invoice" prefix="iv" src="schemas/invoice.xsd" />
+		<schema name="new" prefix="nw" src="schemas/new.xsd" />
 	</extension>
 
 	<extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
 	   <facet name="Invoice">
         <schema name="invoice" />
+        <schema name="new" />
        </facet>
     </extension>
     
