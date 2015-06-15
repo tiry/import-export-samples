@@ -9,6 +9,11 @@ import org.nuxeo.ecm.core.io.impl.ExportedDocumentImpl;
 import org.nuxeo.ecm.platform.audit.api.AuditReader;
 import org.nuxeo.ecm.platform.audit.api.ExtendedInfo;
 import org.nuxeo.ecm.platform.audit.api.LogEntry;
+import org.nuxeo.ecm.platform.audit.impl.ExtendedInfoImpl.BooleanInfo;
+import org.nuxeo.ecm.platform.audit.impl.ExtendedInfoImpl.DateInfo;
+import org.nuxeo.ecm.platform.audit.impl.ExtendedInfoImpl.DoubleInfo;
+import org.nuxeo.ecm.platform.audit.impl.ExtendedInfoImpl.LongInfo;
+import org.nuxeo.ecm.platform.audit.impl.ExtendedInfoImpl.StringInfo;
 import org.nuxeo.runtime.api.Framework;
 
 public class AuditInfoExportExtension implements ExportExtension {
@@ -54,7 +59,26 @@ public class AuditInfoExportExtension implements ExportExtension {
                     Element extE = extEs.addElement("infos");
                     extE.addAttribute("name", key);
                     ExtendedInfo info = ext.get(key);
-                    extE.setText(info.getSerializableValue().toString());
+
+                    if (info.getSerializableValue()!=null ) {
+                        if (info instanceof BooleanInfo) {
+                            extE.addAttribute("type", "bool");
+                            extE.setText(((BooleanInfo) info).getBooleanValue().toString());
+                        } else if (info instanceof DateInfo) {
+                            extE.addAttribute("type", "date");
+                            extE.setText(((DateInfo) info).getDateValue().toGMTString());
+                        } else if (info instanceof LongInfo) {
+                            extE.addAttribute("type", "long");
+                            extE.setText(((LongInfo) info).getLongValue().toString());
+                        } else if (info instanceof DoubleInfo) {
+                            extE.addAttribute("type", "double");
+                            extE.setText(((DoubleInfo) info).getDoubleValue().toString());
+                        } else if (info instanceof StringInfo) {
+                            extE.addAttribute("type", "string");
+                            extE.setText(((StringInfo) info).getStringValue().toString());
+                        }
+                    }
+
                 }
             }
         }

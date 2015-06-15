@@ -1,4 +1,4 @@
-package org.nuxeo.io.ext;
+package org.nuxeo.io.writer;
 
 import static org.nuxeo.ecm.core.api.CoreSession.IMPORT_VERSION_CREATED;
 import static org.nuxeo.ecm.core.api.CoreSession.IMPORT_VERSION_DESCRIPTION;
@@ -6,7 +6,9 @@ import static org.nuxeo.ecm.core.api.CoreSession.IMPORT_VERSION_LABEL;
 import static org.nuxeo.ecm.core.api.CoreSession.IMPORT_VERSION_VERSIONABLE_ID;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.dom4j.Element;
 import org.nuxeo.common.collections.ScopeType;
@@ -21,10 +23,16 @@ import org.nuxeo.ecm.core.io.impl.plugins.DocumentModelWriter;
 import org.nuxeo.ecm.core.schema.types.primitives.DateType;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 
-public class DocumentWriterExtended extends DocumentModelWriter {
+public class ExtensibleDocumentWriter extends DocumentModelWriter {
 
-    public DocumentWriterExtended(CoreSession session, String parentPath) {
+    public ExtensibleDocumentWriter(CoreSession session, String parentPath) {
         super(session, parentPath);
+    }
+
+    protected List<ImportExtension> extensions = new ArrayList<ImportExtension>();
+
+    public void registerExtension(ImportExtension ext) {
+        extensions.add(ext);
     }
 
     @Override
@@ -97,6 +105,14 @@ public class DocumentWriterExtended extends DocumentModelWriter {
 
         // load into the document the system properties, document needs to exist
         loadSystemInfo(doc, xdoc.getDocument());
+
+        for (ImportExtension ext : extensions) {
+            try {
+                ext.updateImport(doc,xdoc);
+            } catch (Exception e) {
+              throw new ClientException(e);
+            }
+        }
 
         unsavedDocuments += 1;
         saveIfNeeded();

@@ -172,7 +172,7 @@ public class ExportTest {
         // check audit info
         Assert.assertTrue(xml.contains("<auditInfo"));
         Assert.assertTrue(xml.contains("event=\"documentCreated\""));
-        Assert.assertTrue(xml.contains("<infos name=\"title\">MyDoc</infos>"));
+        Assert.assertTrue(xml.contains("<infos name=\"title\" type=\"string\">MyDoc</infos>"));
 
     }
 

@@ -8,11 +8,11 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.io.DocumentPipe;
 import org.nuxeo.ecm.core.io.DocumentReader;
 import org.nuxeo.ecm.core.io.DocumentTransformer;
-import org.nuxeo.ecm.core.io.DocumentWriter;
 import org.nuxeo.ecm.core.io.ExportedDocument;
 import org.nuxeo.ecm.core.io.impl.DocumentPipeImpl;
 import org.nuxeo.ecm.core.io.impl.plugins.XMLDirectoryReader;
-import org.nuxeo.io.ext.DocumentWriterExtended;
+import org.nuxeo.io.writer.DocumentHistoryImporter;
+import org.nuxeo.io.writer.ExtensibleDocumentWriter;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
 public class SampleImporter {
@@ -29,7 +29,9 @@ public class SampleImporter {
     public void run() throws Exception {
 
         final DocumentReader reader = new XMLDirectoryReader(source);
-        DocumentWriter writer = new DocumentWriterExtended(root.getCoreSession(), root.getPathAsString());
+        ExtensibleDocumentWriter writer = new ExtensibleDocumentWriter(root.getCoreSession(), root.getPathAsString());
+
+        writer.registerExtension(new DocumentHistoryImporter());
 
         DocumentPipe pipe = new DocumentPipeImpl(10) {
 

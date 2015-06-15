@@ -10,12 +10,16 @@ This code provides a `SampleImporter.java` that actually simply assemble a core-
 
     reader => transformer => writer
 
-### DocumentWriterExtended
+### ExtensibleDocumentWriter
 
 This implementation provides a version of the `DocumentModelWriter` that :
 
  - handles version import based on the information provided by `VersionInfoExportExtension`
  - use `CoreSession.importDocuments` to be able to keep the uuids 
+
+In addition, this implementation can have contributed `ImportExtension`.
+
+Here we provide a `DocumentHistoryImporter` that will import document history at the same time then the Document if some history data is available.
 
 ### DocumentTransformer
 
