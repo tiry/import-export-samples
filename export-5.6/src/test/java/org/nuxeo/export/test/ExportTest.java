@@ -1,8 +1,6 @@
 package org.nuxeo.export.test;
 
 import java.io.File;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import junit.framework.Assert;
@@ -24,19 +22,19 @@ import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.ecm.platform.audit.AuditFeature;
 import org.nuxeo.ecm.platform.audit.api.AuditReader;
-import org.nuxeo.ecm.platform.audit.api.LogEntry;
 import org.nuxeo.export.SampleExporter;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
+import org.nuxeo.runtime.transaction.TransactionHelper;
 
 @RunWith(FeaturesRunner.class)
 @Features({ TransactionalFeature.class, CoreFeature.class, AuditFeature.class })
 @RepositoryConfig(repositoryName = "default", type = BackendType.H2)
 @Deploy("org.nuxeo.export.sample")
-@LocalDeploy({ "org.nuxeo.export.sample:docTypes.xml" })
+@LocalDeploy({ "org.nuxeo.export.sample:docTypes.xml","org.nuxeo.export.sample:audit-test-contrib.xml" })
 public class ExportTest {
 
     @Inject
@@ -99,9 +97,11 @@ public class ExportTest {
 
         session.save();
 
+        TransactionHelper.commitOrRollbackTransaction();
+        TransactionHelper.startTransaction();
+
         // Audit being async we must wait !
         Thread.sleep(200);
-
         EventService es = Framework.getLocalService(EventService.class);
         es.waitForAsyncCompletion();
 
@@ -169,10 +169,10 @@ public class ExportTest {
 
         System.out.println(sb.toString());
 
-        List<LogEntry> entries = auditReader.getLogEntriesFor(uuid);
-        for (LogEntry e : entries) {
-            System.out.println(e.toString());
-        }
+        // check audit info
+        Assert.assertTrue(xml.contains("<auditInfo"));
+        Assert.assertTrue(xml.contains("event=\"documentCreated\""));
+        Assert.assertTrue(xml.contains("<infos name=\"title\">MyDoc</infos>"));
 
     }
 

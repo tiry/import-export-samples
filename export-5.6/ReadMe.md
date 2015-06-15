@@ -26,6 +26,14 @@ Typically the tree will look like :
      NX-Export-Import/ws1/folder/file/__versions__/1.1/document.xml
      NX-Export-Import/ws1/folder/file/__versions__/1.0/document.xml 
 
+
+This sample code also provides `AuditInfoExportExtension` that exports Audit entris related to the document in the `<auditInfo>` virtual schema.
+
+As a side note, migrating Audit info using this `ExportExtension` allows to migrate only the infornation related to the selected documents, but as a side effect, only Document related entries are exported/migrated :
+
+ - Login/Lougout events are not migrated
+ - any event that is not Document related is not migrated
+
 ### DocumentTransformer
 
 In order to handle the different use case, the code does provide several `DocumentTransformer` examples :
@@ -49,6 +57,15 @@ Of course, order does matter :
         pipe.addTransformer(new SchemaRemover(null, "deprecated"));
         
         pipe.run();
+
+Technically, these `DocumentTransfornmer`s can be used inside the Import pipe as well as inside the Export pipe : this work exactly the same.
+
+Here the `DocumentTransformer` were integrated inside the export pipe :
+
+ - to make unit testing easier : the export pipe is tested against the expected result
+ - to make the import more efficient :
+     - export can easily be multi-threaded to scale the XML transformnations across several CPU
+     - import is more complicated to scale because of the DB concurrency  
 
 ### Http Bindings
 

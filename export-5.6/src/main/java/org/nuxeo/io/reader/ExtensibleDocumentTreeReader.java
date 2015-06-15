@@ -97,14 +97,8 @@ public class ExtensibleDocumentTreeReader extends DocumentModelReader {
             } catch (Exception e) {
                 throw new IOException("Unable to process versions", e);
             }
-            // add history
-            addHistory(docModel, result);
         }
         return result;
-    }
-
-    protected void addHistory(DocumentModel docModel, ExportedDocumentImpl result) {
-        // to discuss if we want to migrate history tied to doc or not
     }
 
 }
