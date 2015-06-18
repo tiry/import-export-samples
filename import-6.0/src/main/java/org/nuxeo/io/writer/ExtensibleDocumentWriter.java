@@ -45,7 +45,11 @@ public class ExtensibleDocumentWriter extends DocumentModelWriter {
         // set lifecycle state at creation
         Element system = xdoc.getDocument().getRootElement().element(ExportConstants.SYSTEM_TAG);
         String lifeCycleState = system.element(ExportConstants.LIFECYCLE_STATE_TAG).getText();
-        doc.putContextData("initialLifecycleState", lifeCycleState);
+        String lifeCyclePolicy = system.element(ExportConstants.LIFECYCLE_POLICY_TAG).getText();
+
+        doc.putContextData(CoreSession.IMPORT_LIFECYCLE_POLICY , lifeCyclePolicy);
+        doc.putContextData(CoreSession.IMPORT_LIFECYCLE_STATE, lifeCycleState);
+
 
         // loadFacets before schemas so that additional schemas are not skipped
         loadFacetsInfo(doc, xdoc.getDocument());

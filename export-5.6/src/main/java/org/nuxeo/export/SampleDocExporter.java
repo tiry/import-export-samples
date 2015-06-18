@@ -17,13 +17,13 @@ import org.nuxeo.io.transformer.FieldMapper;
 import org.nuxeo.io.transformer.SchemaRemover;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
-public class SampleExporter {
+public class SampleDocExporter {
 
     protected final DocumentModel root;
 
     protected final File destination;
 
-    public SampleExporter(DocumentModel root, File destination) {
+    public SampleDocExporter(DocumentModel root, File destination) {
         this.root = root;
         this.destination = destination;
     }

@@ -83,6 +83,9 @@ public class ImportTest {
         DocumentModel doc = session.getDocument(ref);
         Assert.assertNotNull(doc);
 
+        Assert.assertEquals("approved", doc.getCurrentLifeCycleState());
+
+
         List<DocumentModel> versions = session.getVersions(ref);
         Assert.assertEquals(2, versions.size());
 

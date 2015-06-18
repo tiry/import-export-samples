@@ -64,7 +64,7 @@ public class DoExportOperation {
 
 
     public void doExport(DocumentModel root, File target) throws Exception  {
-        SampleExporter exporter = new SampleExporter(root, target);
+        SampleDocExporter exporter = new SampleDocExporter(root, target);
         exporter.run();
     }
 }

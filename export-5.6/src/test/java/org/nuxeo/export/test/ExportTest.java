@@ -22,7 +22,7 @@ import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.ecm.platform.audit.AuditFeature;
 import org.nuxeo.ecm.platform.audit.api.AuditReader;
-import org.nuxeo.export.SampleExporter;
+import org.nuxeo.export.SampleDocExporter;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -93,6 +93,10 @@ public class ExportTest {
         fileDoc2.setPropertyValue("dc:description", "Youhou2");
         fileDoc2 = session.saveDocument(fileDoc2);
 
+        fileDoc2.followTransition("approve");
+
+        Assert.assertEquals("approved", fileDoc2.getCurrentLifeCycleState());
+
         uuid = fileDoc2.getId();
 
         session.save();
@@ -134,7 +138,7 @@ public class ExportTest {
 
         File out = getExportDirectory();
 
-        SampleExporter exporter = new SampleExporter(root, out);
+        SampleDocExporter exporter = new SampleDocExporter(root, out);
 
         exporter.run();
 
