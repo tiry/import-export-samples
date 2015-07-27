@@ -8,7 +8,6 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.ecm.core.work.api.WorkManager;
 import org.nuxeo.runtime.api.Framework;
 
@@ -44,22 +43,7 @@ public class DoExportOperation {
             doExport(root, target);
         } else {
             WorkManager wm = Framework.getLocalService(WorkManager.class);
-
-            final File out = target;
-
-            wm.schedule(new AbstractWork() {
-
-                @Override
-                public String getTitle() {
-                    return "Migration Work";
-                }
-
-                @Override
-                public void work() throws Exception {
-                    doExport(root, out);
-                }
-            });
-
+            wm.schedule(new ExportRunner(root, target, skipBlobs));
             return "scheduled";
         }
 

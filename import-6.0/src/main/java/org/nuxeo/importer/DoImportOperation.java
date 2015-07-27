@@ -8,7 +8,6 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.ecm.core.work.api.WorkManager;
 import org.nuxeo.runtime.api.Framework;
 
@@ -40,26 +39,8 @@ public class DoImportOperation {
             doImport(root, source);
         } else {
             WorkManager wm = Framework.getLocalService(WorkManager.class);
-
             final File out = source;
-
-            // XXX Anonymous classes are not serializable => issues with Redis
-
-            wm.schedule(new AbstractWork() {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public String getTitle() {
-                    return "Migration Work";
-                }
-
-                @Override
-                public void work() throws Exception {
-                    doImport(root, out);
-                }
-            });
-
+            wm.schedule(new ImporterRunner(root, source));
             return "scheduled";
         }
 
