@@ -26,6 +26,10 @@ public class DoExportOperation {
     @Param(name = "targetPath", required = true)
     protected String targetPath = null;
 
+    @Param(name = "skipBlobs", required = false)
+    protected Boolean skipBlobs = false;
+
+
     @OperationMethod
     public String run(final DocumentModel root) throws Exception {
 
@@ -62,9 +66,8 @@ public class DoExportOperation {
         return "done";
     }
 
-
     public void doExport(DocumentModel root, File target) throws Exception  {
-        SampleDocExporter exporter = new SampleDocExporter(root, target);
+        SampleDocExporter exporter = new SampleDocExporter(root, target,skipBlobs);
         exporter.run();
     }
 }

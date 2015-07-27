@@ -1,6 +1,7 @@
 package org.nuxeo.export.test;
 
 import java.io.File;
+
 import javax.inject.Inject;
 
 import junit.framework.Assert;
@@ -34,7 +35,7 @@ import org.nuxeo.runtime.transaction.TransactionHelper;
 @Features({ TransactionalFeature.class, CoreFeature.class, AuditFeature.class })
 @RepositoryConfig(repositoryName = "default", type = BackendType.H2)
 @Deploy("org.nuxeo.export.sample")
-@LocalDeploy({ "org.nuxeo.export.sample:docTypes.xml","org.nuxeo.export.sample:audit-test-contrib.xml" })
+@LocalDeploy({ "org.nuxeo.export.sample:docTypes.xml", "org.nuxeo.export.sample:audit-test-contrib.xml" })
 public class ExportTest {
 
     @Inject
@@ -44,6 +45,8 @@ public class ExportTest {
     protected AuditReader auditReader;
 
     String uuid;
+
+    boolean skipBlobs = true;
 
     protected DocumentModel createSomethingToExport() throws Exception {
 
@@ -138,7 +141,7 @@ public class ExportTest {
 
         File out = getExportDirectory();
 
-        SampleDocExporter exporter = new SampleDocExporter(root, out);
+        SampleDocExporter exporter = new SampleDocExporter(root, out, skipBlobs);
 
         exporter.run();
 

@@ -23,9 +23,12 @@ public class SampleDocExporter {
 
     protected final File destination;
 
-    public SampleDocExporter(DocumentModel root, File destination) {
+    protected final boolean skipBlobs;
+
+    public SampleDocExporter(DocumentModel root, File destination, boolean skipBlobs) {
         this.root = root;
         this.destination = destination;
+        this.skipBlobs=skipBlobs;
     }
 
     public void run() throws Exception {
