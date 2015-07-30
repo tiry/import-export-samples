@@ -112,6 +112,9 @@ public class ImportTest {
 
         Assert.assertTrue(entries.size()>1);
 
+        // check lock
+        Assert.assertTrue(invoice.isLocked());
+
     }
 
 

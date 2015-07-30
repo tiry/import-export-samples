@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.io.ExportedDocument;
 import org.nuxeo.ecm.platform.audit.api.AuditLogger;
@@ -19,7 +20,7 @@ import org.nuxeo.runtime.api.Framework;
 public class DocumentHistoryImporter implements ImportExtension {
 
     @Override
-    public void updateImport(DocumentModel docModel, ExportedDocument xdoc) throws Exception {
+    public void updateImport(CoreSession session, DocumentModel docModel, ExportedDocument xdoc) throws Exception {
 
         Element auditInfo = xdoc.getDocument().getRootElement().element("auditInfo");
         if (auditInfo != null) {

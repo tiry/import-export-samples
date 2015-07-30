@@ -11,6 +11,7 @@ import org.nuxeo.ecm.core.io.ExportedDocument;
 import org.nuxeo.ecm.core.io.impl.plugins.XMLDirectoryReader;
 import org.nuxeo.io.writer.DocumentHistoryImporter;
 import org.nuxeo.io.writer.ExtensibleDocumentWriter;
+import org.nuxeo.io.writer.VCSDocumentLockImporter;
 
 public class SampleImporter {
 
@@ -29,6 +30,7 @@ public class SampleImporter {
         ExtensibleDocumentWriter writer = new ExtensibleDocumentWriter(root.getCoreSession(), root.getPathAsString());
 
         writer.registerExtension(new DocumentHistoryImporter());
+        writer.registerExtension(new VCSDocumentLockImporter());
 
         DocumentPipe pipe = new ImporterPipe(10);
         pipe.setReader(reader);

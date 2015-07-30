@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.nuxeo.common.collections.ScopeType;
 import org.nuxeo.common.utils.Path;
@@ -24,6 +26,8 @@ import org.nuxeo.ecm.core.schema.types.primitives.DateType;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 
 public class ExtensibleDocumentWriter extends DocumentModelWriter {
+
+    protected static Log log = LogFactory.getLog(ExtensibleDocumentWriter.class);
 
     public ExtensibleDocumentWriter(CoreSession session, String parentPath) {
         super(session, parentPath);
@@ -112,9 +116,10 @@ public class ExtensibleDocumentWriter extends DocumentModelWriter {
 
         for (ImportExtension ext : extensions) {
             try {
-                ext.updateImport(doc,xdoc);
+                ext.updateImport(session, doc,xdoc);
             } catch (Exception e) {
-              throw new ClientException(e);
+                log.error("Error while processing extensions",e);
+                throw new ClientException(e);
             }
         }
 
