@@ -102,6 +102,9 @@ public class ExportTest {
 
         uuid = fileDoc2.getId();
 
+        // lock the document
+        invoiceDoc.setLock();
+
         session.save();
 
         TransactionHelper.commitOrRollbackTransaction();
@@ -180,6 +183,10 @@ public class ExportTest {
         Assert.assertTrue(xml.contains("<auditInfo"));
         Assert.assertTrue(xml.contains("event=\"documentCreated\""));
         Assert.assertTrue(xml.contains("<infos name=\"title\" type=\"string\">MyDoc</infos>"));
+
+        // check lock info
+        Assert.assertTrue(xml.contains("<lockInfo"));
+        Assert.assertTrue(xml.contains("<owner>Administrator</owner>"));
 
     }
 

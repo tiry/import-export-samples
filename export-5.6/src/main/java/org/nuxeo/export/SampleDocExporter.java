@@ -10,6 +10,7 @@ import org.nuxeo.ecm.core.io.impl.DocumentPipeImpl;
 import org.nuxeo.ecm.core.io.impl.plugins.XMLDirectoryWriter;
 import org.nuxeo.io.reader.AuditInfoExportExtension;
 import org.nuxeo.io.reader.ExtensibleDocumentTreeReader;
+import org.nuxeo.io.reader.LockExporter;
 import org.nuxeo.io.reader.VersionInfoExportExtension;
 import org.nuxeo.io.transformer.DoctypeToFacetTranslator;
 import org.nuxeo.io.transformer.FacetRemover;
@@ -39,6 +40,7 @@ public class SampleDocExporter {
         // register extensions !
         reader.registerExtension(new VersionInfoExportExtension());
         reader.registerExtension(new AuditInfoExportExtension());
+        reader.registerExtension(new LockExporter());
 
         DocumentPipe pipe = new DocumentPipeImpl(10) {
 
